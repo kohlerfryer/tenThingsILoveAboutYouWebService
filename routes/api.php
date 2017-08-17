@@ -19,3 +19,5 @@ use Illuminate\Http\Request;
 
 
 Route::post("/user", "Auth\RegisterController@create");
+
+Route::get("/user", "Auth\RegisterController@create");

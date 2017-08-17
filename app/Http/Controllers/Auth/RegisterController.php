@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-
+use App\Library\phpqrcode\QRcode;
 use Log;
 class RegisterController extends Controller
 {
@@ -53,7 +53,7 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => 'required|string|min:6',
         ]);
     }
 
@@ -65,21 +65,34 @@ class RegisterController extends Controller
      */
     protected function create(Request $request)
     {
-        $data = $request->all();
-        Log::debug('user data being sent: ' . print_r($data, true));
+        // $data = $request->all();
+        // Log::debug('user data being sent: ' . print_r($data, true));
 
-        $validator = $this->validator($data);
-        if ($validator->fails()) {
-            Log::debug('ERROR: ' . print_r(response()
-                ->json($validator->errors()->all(), 400), true));
-            return response()
-                ->json($validator->errors()->all(), 400);
-        }
+        // $validator = $this->validator($data);
+        // if ($validator->fails()) {
+        //     Log::debug('ERROR: ' . print_r(response()
+        //         ->json($validator->errors()->all(), 400), true));
+        //     return response()
+        //         ->json(["Errors" => $validator->errors()->all()], 400);
+        // }
         
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => bcrypt($data['password']),
-        ]);
+        // return User::create([
+        //     'name' => $data['name'],
+        //     'email' => $data['email'],
+        //     'password' => bcrypt($data['password']),
+        // ]);
+
+    // Configuring SVG 
+     
+        $dataText   = 'PHP QR Code :)'; 
+        $svgTagId   = 'id-of-svg'; 
+        $saveToFile = false; 
+        $imageWidth = 250; // px 
+        
+        // SVG file format support 
+        $svgCode = \QRcode::svg($dataText, $svgTagId, $saveToFile, QR_ECLEVEL_L, $imageWidth); 
+        
+        return $svgCode; 
+    
     }
 }
